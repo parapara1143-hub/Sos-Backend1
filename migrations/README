@@ -1,1 +1,5 @@
+HEAD
 O Flask-Migrate criará arquivos aqui na primeira execução.
+=======
+Single-database configuration for Flask.
+7ab895a (Adiciona pasta migrations com env.py)
