@@ -51,7 +51,7 @@ def create_app():
         email = os.environ.get("MASTER_EMAIL", "master@sos.com")
         password = os.environ.get("MASTER_PASSWORD", "123456")
 
-        from src.models.user import User  # ⚠️ ajuste para o caminho real do seu modelo
+       from src.models import User  # ⚠️ ajuste para o caminho real do seu modelo
 
         # garante que a tabela existe
         db.create_all()
