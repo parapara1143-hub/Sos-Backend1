@@ -1,4 +1,3 @@
-
 import os
 from flask import Flask
 from flask_cors import CORS
@@ -18,9 +17,15 @@ def create_app():
     audit_middleware(app)
     register_blueprints(app)
 
+    # rota de health check
     @app.get("/api/health")
     def health():
         return {"status": "ok"}
+
+    # rota raiz para evitar 404
+    @app.get("/")
+    def index():
+        return {"message": "API SOS rodando 🚀", "status": "ok"}
 
     return app
 
