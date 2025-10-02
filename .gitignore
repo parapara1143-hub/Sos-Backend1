@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
+
+# Banco local / instâncias
+instance/
+
+# Alembic local cache
+migrations/*.pyc
+migrations/__pycache__/
