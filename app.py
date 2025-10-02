@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from src.extensions import db, migrate, socketio
@@ -27,11 +27,37 @@ def create_app():
     def index():
         return {"message": "API SOS rodando 🚀", "status": "ok"}
 
+    # rota para seed do usuário master
+    @app.post("/internal/seed-master")
+    def seed_master():
+        token = request.headers.get("X-Seed-Token")
+        if token != os.environ.get("SEED_TOKEN"):
+            return {"error": "unauthorized"}, 401
+
+        email = os.environ.get("MASTER_EMAIL", "master@sos.com")
+        password = os.environ.get("MASTER_PASSWORD", "123456")
+
+        from src.models.user import User  # ajuste conforme seu modelo
+
+        db.create_all()
+        existing = User.query.filter_by(email=email).first()
+        if existing:
+            return {"message": "usuario_master_ja_existe"}, 200
+
+        from werkzeug.security import generate_password_hash
+        user = User(email=email, name="Master")
+        user.password_hash = generate_password_hash(password)
+        user.role = "master"
+
+        db.session.add(user)
+        db.session.commit()
+        return {"message": "usuario_master_criado"}, 201
+
     return app
 
 app = create_app()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8000"))
-    socketio.init_app(app, cors_allowed_origins=os.environ.get("SOCKET_CORS","*").split(","))
+    socketio.init_app(app, cors_allowed_origins=os.environ.get("SOCKET_CORS", "*").split(","))
     socketio.run(app, host="0.0.0.0", port=port)
